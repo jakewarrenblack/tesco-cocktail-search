@@ -1,28 +1,23 @@
 <?php
-include('simplehtmldom/simple_html_dom.php');
-$id = $_POST['id'];
-$id = str_replace(" ","+",$id);
+require_once('vendor/autoload.php');
+$web = new \spekulatius\phpscraper();
+$id = str_replace(" ","+",$_POST['id']);
 $ingredients = null;
 $tesco_output = array();
 
-$small = getIngredients($id);
+$small = getIngredients($id,$web);
 
-function getIngredients($id){
-    $html = file_get_html('https://www.webtender.com/cgi-bin/search?name=' .$id. '&verbose=on');
-    foreach($html->find('html body div form') as $elements) {
-        $table = $elements->find('table', 1);
-        $tr = $table->find('tr',0);
-        $td = $tr->find('td',1);
-        $small = $td->find('small',1);
-        if($small!=null){
-            $small = $small->plaintext;
-            return $small;
-        }else{
-            return 'Ingredients not found for this cocktail, sorry.';
+function getIngredients($id,$web){
+    $web->go('https://www.webtender.com/cgi-bin/search?name=' .$id. '&verbose=on');
+
+    function getSmall($web){
+        foreach($web->smalls as $small){
+            if (strpos($small, 'Ingredients:') !== false) {
+                return $small;
+            }
         }
     }
-    $html->clear(); 
-    unset($html);
+    return getSmall($web);
 }
 
 $small_arr = explode(", ", substr($small,13));
@@ -33,25 +28,38 @@ foreach($small_arr as $small_arr_item){
 }
 
 foreach($urls as $url){
-    array_push($tesco_output, tescoSearch($url));
+    array_push($tesco_output, tescoSearch($url,$web));
 }
 
-function tescoSearch($url){
-    $html = file_get_html($url);
-    foreach($html->find('html body #container #outer #content') as $elements){
-        $div = $elements->find('div',2);
-        $contentMain = $div->find('#contentMain');
-        $multipleAdd = $contentMain[0]->find('#multipleAdd');
-        $endFacets = $multipleAdd[0]->find('#endFacets-1');
-        $ul = $endFacets[0]->find('ul');
-        $li = $ul[0]->find('li',0);
-        /* replace 2 or more spaces with a single space */
-        return str_replace(" Add to basketQuantity", "",preg_replace('!\s+!', ' ', $li->plaintext));
+function tescoSearch($url,$web){
+    $web->go($url);
+
+    if(strpos(implode(',',$web->paragraphs), 'No products are available') !== false){
+        /* Means Tesco doesn't have this product */
+        return;
     }
-    $html->clear(); 
-    unset($html);
-}
 
+    if(!function_exists('getTitle')){
+        function getTitle($web){
+            foreach($web->h3 as $h3){
+                if($h3!='Filter by area'){
+                    return $h3;
+                }
+            }
+        }
+    }
+
+    if(!function_exists('getPrice')){
+        function getPrice($web){
+            foreach($web->paragraphs as $price){
+                if (strpos($price, '€') !== false) {
+                    return $price;
+                }
+            }
+        }
+    }
+    return getTitle($web) . ' ' . getPrice($web); 
+}
 ?>
 
 <!DOCTYPE html>
@@ -79,7 +87,7 @@ function tescoSearch($url){
                     
                     if($tesco_item != null){
                         ?>
-                        <li><?= str_replace(" Alcohol can only be delivered between 11am - 10pm Monday to Saturday. Alcohol can only be delivered between 1pm and 10pm on Sunday.","",$tesco_item); ?></li>
+                        <li><?= $tesco_item ?></li>
                         <?php
                     }
                     ?>
