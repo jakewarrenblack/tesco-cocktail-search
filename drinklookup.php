@@ -1,41 +1,35 @@
 <?php
-require_once('vendor/autoload.php');
+require('vendor/autoload.php');
 $web = new \spekulatius\phpscraper();
+/* the name of the cocktail, passed from the form on submit.php */
 $id = str_replace(" ","+",$_POST['id']);
-$ingredients = null;
 $tesco_output = array();
-
-$small = getIngredients($id,$web);
+$ingredients = getIngredients($id,$web);
 
 function getIngredients($id,$web){
+    /* going to webtender.com to retrieve ingredients for the cocktail */
     $web->go('https://www.webtender.com/cgi-bin/search?name=' .$id. '&verbose=on');
 
-    function getSmall($web){
-        foreach($web->smalls as $small){
-            if (strpos($small, 'Ingredients:') !== false) {
-                return $small;
-            }
+    /* added a bit to phpscraper to return <small> tags */
+    foreach($web->smalls as $small){
+        /* check each <small> tag to see if it contains the word 'Ingredients:' - return it, if so */
+        if (strpos($small, 'Ingredients:') !== false) {
+            return explode(", ", ($small));
         }
     }
-    return getSmall($web);
 }
 
-$small_arr = explode(", ", substr($small,13));
-$urls = array();
-
-foreach($small_arr as $small_arr_item){
-    array_push($urls, 'https://www.tesco.ie/groceries/product/search/default.aspx?searchBox='.str_replace(" ","%20",$small_arr_item));
-}
-
-foreach($urls as $url){
-    array_push($tesco_output, tescoSearch($url,$web));
+foreach($ingredients as $ingredient){
+    /* create a Tesco search query with the ingredient appended */
+    $tesco_output[] = tescoSearch('https://www.tesco.ie/groceries/product/search/default.aspx?searchBox='.str_replace(" ","%20",$ingredient),$web);
 }
 
 function tescoSearch($url,$web){
     $web->go($url);
 
+    /* if any paragraph contains this text */
     if(strpos(implode(',',$web->paragraphs), 'No products are available') !== false){
-        /* Means Tesco doesn't have this product */
+        /* Means Tesco doesn't have this product*/
         return;
     }
 
@@ -74,11 +68,16 @@ function tescoSearch($url,$web){
 <body>
 <?php include 'nav.php' ?>
     <div class="container">
-        <h1><?= $small ?></h1>
+        <h1><?= str_replace("+"," ",$id) ?></h1>
+        <br>
+        <h2><?= implode(", ",$ingredients) ?></h2>
         <br>
         <div class="cocktail-img-contain">
             <img src="<?= $_POST['img'] ?>">
-        </div>        
+        </div>    
+        <h4>Tesco Ireland prices:</h4>    
+        <h5>(Only available ingredients listed)</h5>
+        <hr>
         <ul class="tesco_result">
             <?php
                 foreach($tesco_output as $tesco_item){

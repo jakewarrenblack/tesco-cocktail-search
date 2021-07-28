@@ -5,6 +5,10 @@
     font-family:'Arial',sans-serif;
 }
 
+h1,h2,h3,h4,h5{
+    text-align:center;
+}
+
 .container{
     width:100%;
     display:flex;
@@ -19,7 +23,7 @@
     justify-content:center;
     padding:2rem;
     font-size:1.5rem;
-    background:lightblue;
+    background:#333;
     box-shadow: -1px 2px 10px 0px rgba(0,0,0,0.48);
 }
 
@@ -32,10 +36,6 @@ input,button{
 ul{
     list-style:none;
     text-align:center;
-}
-
-.tesco_result{
-    width:50%;
 }
 
 li{
@@ -101,8 +101,6 @@ li{
 
 .tesco_result{
     width: 50%;
-    height: 50vh;
-    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -111,7 +109,7 @@ li{
 
 .cocktail-img-contain{
     width: 25%;
-    margin-top: 5rem;
+    margin:4rem;
 }
 
 .cocktail-img-contain img{
@@ -126,3 +124,37 @@ li{
     padding: 2rem;
     border-radius: 5rem;
 }
+
+hr{
+    width:100%;
+    margin:1rem;
+}
+
+/* On screens that are 992px wide or less, the background color is blue */
+@media screen and (max-width: 992px) {
+    .container{
+        padding: 2rem 1rem 2rem 1rem;
+    }
+    .home-form{
+        display:flex;
+        flex-direction:column;
+    }
+
+    .home-submit{
+        margin-top:1rem;
+    }
+
+    .drinks-list{
+        width:unset;
+    }
+
+    .cocktail-img-contain{
+        width:unset;
+    }
+
+    .tesco_result{
+        height:unset;
+        width:unset;
+    }
+  }
+  

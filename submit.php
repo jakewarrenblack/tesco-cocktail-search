@@ -2,6 +2,7 @@
 $ingredient = $_POST['ingredients'];
 $resp = null;
 
+/* search thecocktaildb.com for ingredient passed from search field */
 $url = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=" . str_replace(" ","%20",$ingredient);
 
 try{

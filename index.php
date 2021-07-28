@@ -10,9 +10,9 @@
 <body>
     <?php include 'nav.php' ?>
     <div class="container">
-        <form method="POST" action="submit.php">
-            <input placeholder="Enter an ingredient" name="ingredients" type="text"></input>
-            <button type="submit">Submit</button>
+        <form class="home-form" method="POST" action="submit.php">
+            <input class="home-search" placeholder="Enter an ingredient" name="ingredients" type="text"></input>
+            <button class="home-submit" type="submit">Submit</button>
         </form>
     </div>
 </body>
