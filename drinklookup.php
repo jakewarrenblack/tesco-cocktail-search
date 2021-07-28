@@ -19,9 +19,11 @@ function getIngredients($id,$web){
     }
 }
 
-foreach($ingredients as $ingredient){
-    /* create a Tesco search query with the ingredient appended */
-    $tesco_output[] = tescoSearch('https://www.tesco.ie/groceries/product/search/default.aspx?searchBox='.str_replace(" ","%20",$ingredient),$web);
+if($ingredients!=null){
+    foreach($ingredients as $ingredient){
+        /* create a Tesco search query with the ingredient appended */
+        $tesco_output[] = tescoSearch('https://www.tesco.ie/groceries/product/search/default.aspx?searchBox='.str_replace(" ","%20",$ingredient),$web);
+    }
 }
 
 function tescoSearch($url,$web){
@@ -70,7 +72,7 @@ function tescoSearch($url,$web){
     <div class="container">
         <h1><?= str_replace("+"," ",$id) ?></h1>
         <br>
-        <h2><?= implode(", ",$ingredients) ?></h2>
+        <h2><?= $ingredients != null ? implode(", ",$ingredients) : 'Ingredients not found.' ?></h2>
         <br>
         <div class="cocktail-img-contain">
             <img src="<?= $_POST['img'] ?>">
@@ -80,6 +82,7 @@ function tescoSearch($url,$web){
         <hr>
         <ul class="tesco_result">
             <?php
+            if($tesco_output !=null){
                 foreach($tesco_output as $tesco_item){
                     ?>
                     <?php
@@ -92,6 +95,11 @@ function tescoSearch($url,$web){
                     ?>
                     <?php
                 }
+            }else{
+                ?>
+                <li><?= 'No products found.' ?></li>
+                <?php
+            }
             ?>
         </ul>
     </div>

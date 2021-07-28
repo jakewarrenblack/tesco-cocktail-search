@@ -11,7 +11,7 @@
     <?php include 'nav.php' ?>
     <div class="container">
         <form class="home-form" method="POST" action="submit.php">
-            <input class="home-search" placeholder="Enter an ingredient" name="ingredients" type="text"></input>
+            <input class="home-search" placeholder="Search for an ingredient" name="ingredients" type="text"></input>
             <button class="home-submit" type="submit">Submit</button>
         </form>
     </div>
