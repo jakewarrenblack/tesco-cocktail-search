@@ -22,7 +22,7 @@ function getIngredients($id,$web){
 if($ingredients!=null){
     foreach($ingredients as $ingredient){
         /* create a Tesco search query with the ingredient appended */
-        $tesco_output[] = tescoSearch('https://www.tesco.ie/groceries/product/search/default.aspx?searchBox='.str_replace(" ","%20",$ingredient),$web);
+        $tesco_output[] = tescoSearch('https://www.tesco.ie/groceries/product/search/default.aspx?searchBox='. ltrim(str_replace(" ","%20",$ingredient),'Ingredients:'),$web);
     }
 }
 
