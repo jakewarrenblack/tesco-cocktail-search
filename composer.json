@@ -1,5 +1,8 @@
 {
     "require": {
-        "spekulatius/phpscraper": "^0.5.1"
+        "spekulatius/phpscraper": "^0.5.1",
+        "voku/simple_html_dom": "^4.8",
+        "fabpot/goutte": "^4.0",
+        "guzzlehttp/guzzle": "^7.4"
     }
 }

@@ -6,6 +6,9 @@ $id = str_replace(" ","+",$_POST['id']);
 $tesco_output = array();
 $ingredients = getIngredients($id,$web);
 
+use Goutte\Client;
+
+
 function getIngredients($id,$web){
     /* going to webtender.com to retrieve ingredients for the cocktail */
     $web->go('https://www.webtender.com/cgi-bin/search?name=' .$id. '&verbose=on');
@@ -26,7 +29,10 @@ if($ingredients!=null){
     }
 }
 
+
+
 function tescoSearch($url,$web){
+
     $web->go($url);
 
     /* if any paragraph contains this text */
@@ -46,15 +52,23 @@ function tescoSearch($url,$web){
     }
 
     if(!function_exists('getPrice')){
-        function getPrice($web){
-            foreach($web->paragraphs as $price){
+        function getPrice($url){
+
+            // $css_selector = "div.price-per-sellable-unit.div.span.span.value";
+            $thing_to_scrape = "_text";
+            $client = new Client();
+            $crawler = $client->request('GET', $url);
+            $output = $crawler->filter('div.price-per-sellable-unit > div > span')->extract(array($thing_to_scrape));            
+
+            foreach($output as $price){
                 if (strpos($price, '€') !== false) {
+                    // return str_replace($price, " ", " ");
                     return $price;
                 }
             }
         }
     }
-    return getTitle($web) . ' ' . getPrice($web); 
+    return getTitle($web) . ' ' . getPrice($url); 
 }
 ?>
 
