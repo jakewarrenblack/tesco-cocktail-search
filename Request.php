@@ -34,7 +34,7 @@ class Request{
                 $drinks = $decode->drinks;
             }            
             curl_close($curl);
-            return $drinks;
+            if(isset($drinks)) return $drinks;            
         }
         catch(Exception $e){
             return $e->getMessage();

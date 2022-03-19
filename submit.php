@@ -1,9 +1,18 @@
 <?php
 include 'Request.php';
-$ingredient = $_POST['ingredients'];
-$resp = null;
 
-$drinks = Request::search("https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=",$ingredient);
+if($_POST['query'] == ""){
+    header('Location: index.php');    
+    return;
+}
+
+$query = $_POST['query'];
+
+$drinks = Request::search("https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=",$query);
+
+if($drinks == null){
+    $drinks = Request::search("https://www.thecocktaildb.com/api/json/v1/1/search.php?s=",$query);
+}
 
 ?>
 
@@ -19,7 +28,7 @@ $drinks = Request::search("https://www.thecocktaildb.com/api/json/v1/1/filter.ph
 <body>
 <?php include 'nav.php' ?>
     <div class="container">
-        <h1>Cocktails using <?= $_POST['ingredients'] ?></h1>
+        <h1>Cocktails matching <?= $query?></h1>
         <br>
         <ul class="drinks-list">
         <?php
